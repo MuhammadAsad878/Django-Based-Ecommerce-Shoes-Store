@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} Home Page {% endblock title %}
+
+{% block content %}
+{% load static %}
+<div class="container-fluid p-5 mb-0">
+
+  <div class="row d-flex offset-1">
+    {% for x in products %}
+      <div class="card pb-1 m-2 border-0" style="width: 18rem;" title="{{ x.title }}">
+        <a href="{% url 'view_product' x.id %}" class="text-decoration-none text-black">
+          <img src="{{x.image.url}}" class="card-img-top border border-3" alt="Default Image" width="70"> 
+          <p></p> 
+          <div class="card-body">
+            <h5 class="card-title">{{ x.title }}</h5>
+            <p>Price: {{ x.retail_price }}</p>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <p>No products available!</p>
+    {% endfor %}
+  </div>
+</div>
+<span
+    id="cart-count"
+    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+   {% block cartCount %}   {{ cart_count }} {% endblock cartCount %}   
+</span>
+
+
+{% endblock content %}

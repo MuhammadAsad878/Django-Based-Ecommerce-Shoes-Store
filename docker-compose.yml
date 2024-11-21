@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: /home/devops/Project/Store # Corrected the path to the actual project directory
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000  # Command to start the Django development server
+    volumes:
+      - /home/devops/Project/Store:/app  # Mount the correct project directory to /app inside the container
+    ports:
+      - "8000:8000"  # Map port 8000 on the host to port 8000 in the container
+    environment:
+      - PYTHONUNBUFFERED=1  # Ensures Python outputs logs directly without buffering
+    
+  
