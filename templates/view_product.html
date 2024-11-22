@@ -1,74 +1,131 @@
 {% extends "base.html" %}
 
-{% block title%} View Item Page {% endblock title%}
+{% block title %} View Item Page {% endblock title %}
 
-
-{%block content%}
+{% block content %}
 <style>
-  .hide{
+  .hide {
     display: none;
   }
+
+  /* Add hover effect on the image */
+  .product-img {
+    transition: transform 0.3s ease;
+  }
+  .product-img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Style the success message */
+  .message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #c3e6cb;
+    margin-top: 10px;
+  }
+
+  .message.hide {
+    display: none;
+  }
+
+  /* Add a shadow effect on the button */
+  .add-to-cart-btn {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .add-to-cart-btn:hover {
+    background-color: #007bff;
+    transform: scale(1.05);
+  }
+
+  /* Make the card responsive */
+  .product-card {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .product-details {
+    padding-left: 20px;
+  }
 </style>
-<div class="container-fluid p-4 ">
 
-  <div class="row offset-1  ">
-<div class="col-10">
-    <div class="card mb-3 border-0 " >
-      <div class="row g-0">
-        <div class="col-md-4">
-          {% if product.image.url is not None %}
-          <img src="http://127.0.0.1:8000{{product.image.url}}" class="img-fluid rounded-start" alt="{{product.title}}">
-          {% else %}
-          <img src="http://127.0.0.1:8000{{product.image.url}}" class="img-fluid rounded-start" alt="">      
-          {% endif %}
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title"><b>{{product.title }}</b></h5>
-            <p class="card-text"> Color : {{product.color }}</p>
-            <p class="card-text">Size : {{product.size }}</p>
-            <p class="card-text">Price : <b> {{product.retail_price }} </b>Rs</p>
-            <button  class="btn btn-secondary  mb-3 rounded-0 w-50" value="{{product.id}}" id="add-cart" onclick="showMessage()">Add to Cart</button> <span class="message hide"><b> {{product.title}} </b> added to cart successfully !</span>
+<div class="container-fluid p-4">
+  <div class="row offset-1">
+    <div class="col-10">
+      <div class="card mb-3 border-0 product-card">
+        <div class="row g-0">
+          <!-- Product Image -->
+          <div class="col-md-4">
+            {% if product.image.url %}
+              <img src="http://127.0.0.1:8000{{ product.image.url }}" class="img-fluid rounded-start product-img" alt="{{ product.title }}">
+            {% else %}
+              <img src="http://127.0.0.1:8000{{ product.image.url }}" class="img-fluid rounded-start" alt="No Image Available">
+            {% endif %}
+          </div>
 
-          <p class="card-text"> Description : <br> {{product.description }}</p>
+          <!-- Product Details -->
+          <div class="col-md-8">
+            <div class="card-body product-details">
+              <h5 class="card-title"><b>{{ product.title }}</b></h5>
+              <p class="card-text">Color: {{ product.color }}</p>
+              <p class="card-text">Size: {{ product.size }}</p>
+              <p class="card-text">Price: <b>{{ product.retail_price }}</b> Rs</p>
 
+              <!-- Add to Cart Button -->
+              <button class="btn btn-primary add-to-cart-btn mb-3 w-50" value="{{ product.id }}" id="add-cart" onclick="showMessage()">Add to Cart</button>
+
+              <!-- Success Message -->
+              <span class="message hide"><b>{{ product.title }}</b> added to cart successfully!</span>
+
+              <!-- Product Description -->
+              <p class="card-text">Description: <br>{{ product.description }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </div>
   </div>
 
-<script>
-  function showMessage(){
-    const message = document.querySelector('.message');
-    if(message.classList.contains("hide")){
-      message.classList.remove("hide");
-      setTimeout(() => {
-        message.classList.add('hide');
-      }, 1000);
-    }else{
-      message.classList.add("hide");
+  <!-- Success message display with timeout -->
+  <script>
+    function showMessage() {
+      const message = document.querySelector('.message');
+      if (message.classList.contains("hide")) {
+        message.classList.remove("hide");
+        setTimeout(() => {
+          message.classList.add('hide');
+        }, 1000); // Adjusted to 1 second (1000 milliseconds)
+      } else {
+        message.classList.add("hide");
+      }
     }
-  }
-  $(document).on('click','#add-cart',function(e){
-    e.preventDefault();
-    $.ajax({
-      type: 'POST',
-      url: "{% url 'cart_add' %}",
-      data: {
+  
+    // AJAX request to add product to cart
+    $(document).on('click', '#add-cart', function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'cart_add' %}",
+        data: {
           product_id: $('#add-cart').val(),
           csrfmiddlewaretoken: '{{ csrf_token }}',
-          action:'post',
-      },
-      success:function(json){
-        console.log(json);
-      },
-      error:function (xhr,errmsg,err){
-
-      }
+          action: 'post',
+        },
+        success: function (json) {
+          console.log('Product added to cart:', json);
+          showMessage();  // Show success message on successful add
+        },
+        error: function (xhr, errmsg, err) {
+          console.error('Error adding to cart:', errmsg);
+        }
+      })
     })
-  })
-</script>
-
+  </script>
   
-{%endblock content%}
+
+</div>
+
+{% endblock content %}

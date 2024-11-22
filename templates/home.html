@@ -6,28 +6,40 @@
 {% load static %}
 <div class="container-fluid p-5 mb-0">
 
-  <div class="row d-flex offset-1">
+  <!-- Product Row -->
+  <div class="row d-flex justify-content-center">
+
     {% for x in products %}
-      <div class="card pb-1 m-2 border-0" style="width: 18rem;" title="{{ x.title }}">
-        <a href="{% url 'view_product' x.id %}" class="text-decoration-none text-black">
-          <img src="{{x.image.url}}" class="card-img-top border border-3" alt="Default Image" width="70"> 
-          <p></p> 
-          <div class="card-body">
-            <h5 class="card-title">{{ x.title }}</h5>
-            <p>Price: {{ x.retail_price }}</p>
-          </div>
-        </a>
+      <div class="col-md-4 col-lg-3 col-sm-6 mb-4">
+        <div class="card border-0 shadow-sm hover-shadow" style="transition: transform 0.3s ease;">
+          <!-- Product Link -->
+          <a href="{% url 'view_product' x.id %}" class="text-decoration-none text-dark">
+            <div class="position-relative">
+              <!-- Product Image -->
+              <img src="{{ x.image.url }}" class="card-img-top" alt="{{ x.title }}" style="object-fit: cover; height: 200px; border-radius: 10px;">
+              <!-- Badge for Special Offers (optional) -->
+              {% if x.is_on_sale %}
+                <span class="position-absolute top-0 start-0 badge bg-danger text-white m-2">Sale</span>
+              {% endif %}
+            </div>
+            <div class="card-body">
+              <!-- Product Title -->
+              <h5 class="card-title text-center">{{ x.title }}</h5>
+              <!-- Product Price -->
+              <p class="text-center text-muted">Price: ${{ x.retail_price }}</p>
+            </div>
+          </a>
+        </div>
       </div>
     {% empty %}
-      <p>No products available!</p>
+      <p class="text-center w-100">No products available!</p>
     {% endfor %}
   </div>
 </div>
-<span
-    id="cart-count"
-    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-   {% block cartCount %}   {{ cart_count }} {% endblock cartCount %}   
-</span>
 
+<!-- Cart Count Badge -->
+<span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+   {% block cartCount %} {{ cart_count }} {% endblock cartCount %}
+</span>
 
 {% endblock content %}
