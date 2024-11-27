@@ -5,6 +5,10 @@ About Us
 {% endblock title %}
 
 {% block content %}
+<span hidden>
+  {% block cartCount %}   {{ cart_count }} {% endblock cartCount %}   
+
+</span>
   <div class="container-fluid my-4 bg-tertiary p-5">
     <div class="row offset-1 ">
       <div class="col-10"><h1> About Us Page</h1>

@@ -1,96 +1,80 @@
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from store.models import Product
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from store.models import Product
 from cart.cart import Cart
 
 
-
-# Create your views here.
-
-
+# Homepage view: Displays all products and cart count
 @login_required(login_url='Index')
 def HomePage(request):
     products = Product.objects.all()
-    cart = Cart(request)
     cart = request.session.get('cart', {})
-    cart_items = cart  # Get cart dictionary from session
-    cart_count = sum(item['quantity'] for item in cart_items.values())  # Calculate total items in cart
+    cart_count = sum(item['quantity'] for item in cart.values())
     context = {
         'products': products,
-        'cart_count': cart_count  # Pass the count to the template
+        'cart_count': cart_count
     }
-    
     return render(request, 'home.html', context)
 
+
+# Custom redirect for login-required pages
 def custom_login_redirect(request):
-    return render(request, 'Error.html',{'data':"Login First!"})  # Custom page with message
-
-   
+    return render(request, 'Error.html', {'data': "Login First!"})
 
 
+# Add a product to the cart
 @csrf_exempt
-@login_required(login_url='Index')  # Use this only if necessary and if CSRF token is correctly handled in frontend
+@login_required(login_url='Index')
 def add_to_cart(request):
     try:
-        # Get product ID and quantity, with default quantity as 1
-        product_id = str(request.POST.get('product_id'))  # Convert to string for consistency in session
+        product_id = str(request.POST.get('product_id'))
         quantity = int(request.POST.get('quantity', 1))
 
-        # Initialize cart in session if it doesn't exist
+        # Initialize or update the cart
         cart = request.session.get('cart', {})
+        cart[product_id] = cart.get(product_id, 0) + quantity
 
-        # Add or update the product in the cart
-        if product_id in cart:
-            cart[product_id] += quantity  # Update quantity if already in cart
-        else:
-            cart[product_id] = quantity  # Add new product
-
-        # Save cart back to the session
+        # Save cart to session
         request.session['cart'] = cart
-        request.session.modified = True  # Ensure session is saved
+        request.session.modified = True
 
-        # Return the updated cart count
-        cart_count = sum(cart.values())  # Sum up the quantities of all items
-        print(cart.values())  # Debugging line to show cart contents
-        print(cart_count, "is cart count after add to cart")  # Debugging line to show cart count
-
+        # Calculate cart count
+        cart_count = sum(cart.values())
         return JsonResponse({'message': 'Product added to cart', 'cart_count': cart_count})
-    except (ValueError, TypeError) as e:
-        # Handle cases where `quantity` might not be convertible to int or `product_id` is invalid
+    except (ValueError, TypeError):
         return JsonResponse({'message': 'Invalid product ID or quantity'}, status=400)
-    
+
+
+# Get the total count of items in the cart
 @login_required(login_url='Index')
 def get_cart_count(request):
     cart = request.session.get('cart', {})
-    cart_count = sum(cart.values())  # Sum up the quantities of all items
-    print("cart count is ",cart_count)
+    cart_count = sum(cart.values())
     return JsonResponse({'cart_count': cart_count})
 
+
+# View the cart: Displays cart items and total price
 @login_required(login_url='Index')
 def view_cart(request):
     cart = request.session.get('cart', {})
-    print(cart.items())
-    # return HttpResponse("cart")
     cart_items = []
     total_price = 0
 
     for product_id, quantity in cart.items():
         try:
             product = Product.objects.get(id=product_id)
-            cart_items.append({
-                'product': product,
-                'quantity': quantity,
-            })
+            cart_items.append({'product': product, 'quantity': quantity})
             total_price += product.retail_price * quantity
         except Product.DoesNotExist:
-            continue  # Skip items if product doesn't exist
+            continue  # Skip if product doesn't exist
 
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 
+# Remove a product from the cart
 @require_POST
 @login_required(login_url='Index')
 def remove_from_cart(request):
@@ -98,23 +82,41 @@ def remove_from_cart(request):
     cart = request.session.get('cart', {})
 
     if product_id in cart:
-        del cart[product_id]  # Remove item from cart
+        del cart[product_id]
         request.session['cart'] = cart
         request.session.modified = True
 
     return JsonResponse({'message': 'Product removed from cart', 'cart': cart})
 
-@login_required(login_url='Index')
-def view_product(request,product_id):
-    product = get_object_or_404(Product, id=product_id)
-    return render(request, 'view_product.html', {'product': product})
 
+# View a specific product's details
+@login_required(login_url='Index')
+def view_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get('cart', {})
+    cart_count = sum(item['quantity'] for item in cart.values())
+    return render(request, 'view_product.html', {'product': product, 'cart_count': cart_count})
+
+
+# About Us page
 @login_required(login_url='Index')
 def AboutUs(request):
-    return render(request,'aboutUs.html')
+    cart = request.session.get('cart', {})
+    cart_count = sum(item['quantity'] for item in cart.values())
+    return render(request, 'aboutUs.html', {'cart_count': cart_count})
+
+
+# Blog page
 @login_required(login_url='Index')
 def Blog(request):
-    return render(request,'blog.html')
+    cart = request.session.get('cart', {})
+    cart_count = sum(item['quantity'] for item in cart.values())
+    return render(request, 'blog.html', {'cart_count': cart_count})
+
+
+# Contact Us page
 @login_required(login_url='Index')
 def Contact(request):
-    return render(request,'contactUs.html')
+    cart = request.session.get('cart', {})
+    cart_count = sum(item['quantity'] for item in cart.values())
+    return render(request, 'contactUs.html', {'cart_count': cart_count})

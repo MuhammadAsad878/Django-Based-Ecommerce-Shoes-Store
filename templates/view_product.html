@@ -52,6 +52,7 @@
   }
 </style>
 
+
 <div class="container-fluid p-4">
   <div class="row offset-1">
     <div class="col-10">
@@ -65,7 +66,6 @@
               <img src="http://127.0.0.1:8000{{ product.image.url }}" class="img-fluid rounded-start" alt="No Image Available">
             {% endif %}
           </div>
-
           <!-- Product Details -->
           <div class="col-md-8">
             <div class="card-body product-details">
@@ -76,7 +76,7 @@
 
               <!-- Add to Cart Button -->
               <button class="btn btn-primary add-to-cart-btn mb-3 w-50" value="{{ product.id }}" id="add-cart" onclick="showMessage()">Add to Cart</button>
-
+              <span hidden> {% block cartCount %} {{ cart_count }} {% endblock cartCount %}</span>
               <!-- Success Message -->
               <span class="message hide"><b>{{ product.title }}</b> added to cart successfully!</span>
 

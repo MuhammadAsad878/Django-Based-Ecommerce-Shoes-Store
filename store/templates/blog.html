@@ -5,6 +5,10 @@ Blog
 {% endblock title %}
 
 {% block content %}
+<span hidden>
+    {% block cartCount %}   {{ cart_count }} {% endblock cartCount %}   
+  
+  </span>
 <div class="container py-5">
     <h1 class="text-center mb-4">Latest Blogs</h1>
 

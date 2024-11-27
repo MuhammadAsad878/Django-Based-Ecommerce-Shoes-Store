@@ -5,6 +5,10 @@
 
 {% block content %}
 <!-- Cart Summary Section -->
+<span hidden>
+    {% block cartCount %}   {{ cart_count }} {% endblock cartCount %}   
+  
+  </span>
 <div class="container py-5">
     <button class="p-3 w-100 btn btn-success border-0 rounded-pill mb-4">Your Cart</button>
 
