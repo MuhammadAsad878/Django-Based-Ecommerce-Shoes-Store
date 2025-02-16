@@ -21,7 +21,7 @@ Ensure you have the following installed:
 #### 1️⃣ Clone the Repository
 
 ```sh
-git clone https://github.com/your-username/Django-Based-Ecommerce-Store.git
+git clone https://github.com/MuhammadAsad878/Django-Based-Ecommerce-Shoes-Store.git
 cd Django-Based-Ecommerce-Store
 ```
 
@@ -74,7 +74,7 @@ The application will be available at: [http://127.0.0.1:8000/](http://127.0.0.1:
 - 📦 **Order Management**
 - 🎨 **Bootstrap-based Responsive UI**
 
-## 📜 Environment Variables
+## 📜 Environment Variables ( Optional )
 
 Create a `.env` file in the project root and configure the necessary environment variables:
 
