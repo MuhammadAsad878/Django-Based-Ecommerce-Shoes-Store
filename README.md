@@ -90,9 +90,6 @@ This project is licensed under the MIT License.
 
 ---
 
-🎯 **Developed by
-```sh
-[https://github.com/](https://github.com/MuhammadAsad878)
+🎯 **Developed by [Muhammad Asad](https://github.com/MuhammadAsad878)
 
-``` ** 🚀
 
