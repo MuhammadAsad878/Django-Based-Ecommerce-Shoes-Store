@@ -25,17 +25,16 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
+SECRET_KEY = 'django-insecure-_p)jzspqnsu#kq^e$q9g-d_z8sy)s2yf3t_g2j3s@!erc-^3q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = ['django-based-e-commerce-store.railway.internal','127.0.0.1']
 
 
 # settings.py
 
-PORT = os.getenv("PORT", "8000")
 
 
 
@@ -64,6 +63,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+
 ]
 # CSRF_COOKIE_DOMAIN = '127.0.0.1'  # For production or local domains
 
@@ -99,9 +101,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join("/data/", "db.sqlite3"),  # Store SQLite in persistent Railway volume
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join('/data/', 'db.sqlite3'),
     }
 }
 
@@ -144,6 +146,8 @@ STATIC_URL = '/productionfiles/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'store', 'static'),  # If you have app-specific static files
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 CSRF_COOKIE_SECURE = False
 
 # Default primary key field type
